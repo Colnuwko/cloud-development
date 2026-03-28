@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrainingCourseApp.ServiceDe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrainingCourse.Api", "TrainingCourse.Api\TrainingCourse.Api.csproj", "{91E8399E-D30D-3E51-7F8E-F5AF72E578B5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrainingCourseApp.Gateway", "TrainingCourseApp.Gateway\TrainingCourseApp.Gateway.csproj", "{739465EA-49A5-E75F-FAF6-41307826BFEC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{91E8399E-D30D-3E51-7F8E-F5AF72E578B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91E8399E-D30D-3E51-7F8E-F5AF72E578B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{91E8399E-D30D-3E51-7F8E-F5AF72E578B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{739465EA-49A5-E75F-FAF6-41307826BFEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{739465EA-49A5-E75F-FAF6-41307826BFEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{739465EA-49A5-E75F-FAF6-41307826BFEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{739465EA-49A5-E75F-FAF6-41307826BFEC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

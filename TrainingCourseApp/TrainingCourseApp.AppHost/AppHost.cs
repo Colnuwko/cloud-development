@@ -3,12 +3,19 @@
 var redis = builder.AddRedis("redis")
     .WithRedisInsight();
 
-var api = builder.AddProject<Projects.TrainingCourse_Api>("training-course-api")
-    .WithReference(redis)
-    .WaitFor(redis);
+var gateway = builder.AddProject<Projects.TrainingCourseApp_Gateway>("trainingcourseapp-gateway");
+
+for (var i = 0; i < 3; i++)
+{
+    var service = builder.AddProject<Projects.TrainingCourse_Api>($"trainingcourseapp-api-{i}", launchProfileName: null)
+        .WithHttpsEndpoint(8000 + i)
+        .WithReference(redis)
+        .WaitFor(redis);
+    gateway.WaitFor(service);
+}
 
 builder.AddProject<Projects.Client_Wasm>("client-wasm")
-    .WithReference(api)
-    .WaitFor(api);
+    .WaitFor(gateway);
+
 
 builder.Build().Run();

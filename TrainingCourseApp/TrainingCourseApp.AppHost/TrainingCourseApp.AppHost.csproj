@@ -17,7 +17,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\TrainingCourse.Api\TrainingCourse.Api.csproj" />
-	<ProjectReference Include="..\..\Client.Wasm\Client.Wasm.csproj" />  
+	<ProjectReference Include="..\..\Client.Wasm\Client.Wasm.csproj" />
+	<ProjectReference Include="..\..\TrainingCourseApp.Gateway\TrainingCourseApp.Gateway.csproj" />  
   </ItemGroup>
 
 </Project>
