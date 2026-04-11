@@ -9,54 +9,80 @@ namespace TrainingCourseApp.Gateway.LoadBalancer;
 /// </summary>
 public class WeightedRoundRobinLoadBalancer : ILoadBalancer
 {
-    private readonly List<ServiceHostAndPort> _sequence;
-    private int _index = -1;
+    private readonly List<ServiceHostAndPort> _services;
+    private readonly int[] _weights;          // исходные веса
+    private readonly int[] _currentWeights;   // текущие веса для
+    private readonly int _totalWeight;        // сумма всех весов
     private readonly object _lock = new();
-    private readonly string _type;
 
-    public string Type => _type;
+    public string Type => nameof(WeightedRoundRobinLoadBalancer).Replace("LoadBalancer", "");
 
     public WeightedRoundRobinLoadBalancer(List<ServiceHostAndPort> services, int[]? weights = null)
     {
-        _type = nameof(WeightedRoundRobinLoadBalancer).Replace("LoadBalancer", "");
 
-        // Веса по умолчанию, если не переданы
-        weights ??= new[] { 3, 2, 1};
+        if (services == null || services.Count == 0)
+            throw new ArgumentException("Services list cannot be null or empty.", nameof(services));
 
-        _sequence = [];
+        _services = new List<ServiceHostAndPort>(services);
+        _weights = new int[_services.Count];
 
-        for (var i = 0; i < services.Count && i < weights.Length; i++)
+        // Инициализация весов
+        if (weights != null)
         {
-            var weight = weights[i];
-            for (var j = 0; j < weight; j++)
+            for (var i = 0; i < _services.Count && i < weights.Length; i++)
+                _weights[i] = weights[i];
+            for (var i = weights.Length; i < _services.Count; i++)
+                _weights[i] = 1;
+        }
+        else
+        {
+            for (var i = 0; i < _services.Count; i++)
             {
-                _sequence.Add(services[i]);
+                _weights[i] = i switch
+                {
+                    0 => 3,
+                    1 => 2,
+                    2 => 1,
+                    _ => 1
+                };
             }
         }
+        _totalWeight = _weights.Sum();
+        if (_totalWeight <= 0)
+            throw new InvalidOperationException("Total weight must be greater than zero.");
 
-        // Если сервисов больше чем весов, оставшимся даем вес 1
-        for (var i = weights.Length; i < services.Count; i++)
-        {
-            _sequence.Add(services[i]);
-        }
+        _currentWeights = new int[_services.Count];
+        Array.Copy(_weights, _currentWeights, _services.Count);
     }
 
     public Task<Response<ServiceHostAndPort>> LeaseAsync(HttpContext context)
     {
         lock (_lock)
         {
-            if (_sequence.Count == 0)
+            var maxIndex = 0;
+            var maxWeight = _currentWeights[0];
+            for (var i = 1; i < _services.Count; i++)
             {
-                throw new InvalidOperationException("No available downstream services.");
+                if (_currentWeights[i] > maxWeight)
+                {
+                    maxWeight = _currentWeights[i];
+                    maxIndex = i;
+                }
+            }
+            _currentWeights[maxIndex] -= _totalWeight;
+
+            for (var i = 0; i < _services.Count; i++)
+            {
+                _currentWeights[i] += _weights[i];
             }
 
-            _index = (_index + 1) % _sequence.Count;
             return Task.FromResult<Response<ServiceHostAndPort>>(
-                new OkResponse<ServiceHostAndPort>(_sequence[_index]));
+                new OkResponse<ServiceHostAndPort>(_services[maxIndex]));
         }
     }
 
     public void Release(ServiceHostAndPort hostAndPort)
     {
+    
     }
 }
