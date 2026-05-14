@@ -13,12 +13,20 @@
   <ItemGroup>
     <PackageReference Include="Aspire.Hosting.AppHost" Version="9.3.1" />
     <PackageReference Include="Aspire.Hosting.Redis" Version="9.3.1" />
+    <PackageReference Include="CommunityToolkit.Aspire.Hosting.Minio" Version="9.9.0" />
+    <PackageReference Include="LocalStack.Aspire.Hosting" Version="9.5.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\TrainingCourse.Api\TrainingCourse.Api.csproj" />
 	<ProjectReference Include="..\..\Client.Wasm\Client.Wasm.csproj" />
-	<ProjectReference Include="..\..\TrainingCourseApp.Gateway\TrainingCourseApp.Gateway.csproj" />  
+	<ProjectReference Include="..\..\TrainingCourseApp.FileService\TrainingCourseApp.FileService.csproj" />
+	<ProjectReference Include="..\..\TrainingCourseApp.Gateway\TrainingCourseApp.Gateway.csproj" />
   </ItemGroup>
-
+	
+  <ItemGroup>
+	 <None Update="CloudFormation\course-template-sqs.yaml">
+	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	 </None>
+  </ItemGroup>
 </Project>

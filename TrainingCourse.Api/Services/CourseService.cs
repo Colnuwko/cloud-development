@@ -2,13 +2,23 @@
 
 using Microsoft.Extensions.Caching.Distributed;
 using System.Text.Json;
+using TrainingCourse.Api.Messaging;
 using TrainingCourse.Api.Models;
 
 /// <summary>
-/// Сервис для получения информации о курсе
+/// Прикладной сервис обработки запросов к курсу.
+/// Возвращает данные из распределённого кэша, а при их отсутствии генерирует новый курс,
+/// публикует его в брокер сообщений (для последующей сериализации в S3) и помещает в кэш.
 /// </summary>
-public class CourseService(IDistributedCache cache, IConfiguration configuration,
-                ILogger<CourseService> logger) : ICourseService
+/// <param name="cache">Распределённый кэш Redis, используемый для read-through кэширования</param>
+/// <param name="producer">Продюсер брокера сообщений, доставляющий курс в файловый сервис</param>
+/// <param name="configuration">Конфигурация приложения (TTL кэша)</param>
+/// <param name="logger">Структурный логгер</param>
+public class CourseService(
+    IDistributedCache cache,
+    IProducerService producer,
+    IConfiguration configuration,
+    ILogger<CourseService> logger) : ICourseService
 {
     private readonly int _expirationMinutes = configuration.GetValue("CacheSettings:ExpirationMinutes", 10);
 
@@ -41,6 +51,8 @@ public class CourseService(IDistributedCache cache, IConfiguration configuration
         logger.LogInformation("Course {CourseId} not found in cache. Generating", id);
 
         var course = CourseGenerator.GenerateCourse(id);
+
+        await producer.SendMessage(course);
 
         try
         {

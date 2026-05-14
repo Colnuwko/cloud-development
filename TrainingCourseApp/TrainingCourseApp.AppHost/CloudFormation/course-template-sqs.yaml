@@ -1,0 +1,32 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Cloud formation template for training course project (variant: SQS + MinIO)'
+
+Parameters:
+  QueueName:
+    Type: String
+    Description: Name for the SQS queue used to deliver generated courses to the file service
+    Default: 'course-queue'
+
+Resources:
+  CourseQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Ref QueueName
+      VisibilityTimeout: 30
+      MessageRetentionPeriod: 345600
+      DelaySeconds: 0
+      ReceiveMessageWaitTimeSeconds: 0
+      Tags:
+        - Key: Name
+          Value: !Ref QueueName
+        - Key: Environment
+          Value: Lab3
+
+Outputs:
+  SQSQueueName:
+    Description: Name of the SQS queue
+    Value: !GetAtt CourseQueue.QueueName
+
+  SQSQueueArn:
+    Description: ARN of the SQS queue
+    Value: !GetAtt CourseQueue.Arn

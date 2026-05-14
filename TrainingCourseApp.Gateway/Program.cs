@@ -19,7 +19,7 @@ try
             var json = File.ReadAllText(configPath);
             var root = JsonNode.Parse(json);
             var routes = root?["Routes"] as JsonArray;
-            if (routes != null)
+            if (root != null && routes != null)
             {
                 // parse env into host entries
                 var entries = env.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
@@ -53,7 +53,8 @@ try
                     // Replace DownstreamHostAndPorts for routes that specify WeightedRoundRobin
                     foreach (var r in routes)
                     {
-                        var lb = r?["LoadBalancerOptions"] as JsonObject;
+                        if (r is null) continue;
+                        var lb = r["LoadBalancerOptions"] as JsonObject;
                         if (lb != null && string.Equals(lb["Type"]?.ToString(), "WeightedRoundRobin", StringComparison.OrdinalIgnoreCase))
                         {
                             r["DownstreamHostAndPorts"] = downstreamArray;
