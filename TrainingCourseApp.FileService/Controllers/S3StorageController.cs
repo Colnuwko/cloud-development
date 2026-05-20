@@ -21,7 +21,7 @@ public class S3StorageController(IS3Service s3Service, ILogger<S3StorageControll
     /// </summary>
     [HttpGet]
     [ProducesResponseType(200)]
-    [ProducesResponseType(500)]
+    [ProducesResponseType(400)]
     public async Task<ActionResult<List<string>>> ListFiles()
     {
         logger.LogInformation("{Method} of {Controller} was called", nameof(ListFiles), nameof(S3StorageController));
@@ -44,7 +44,7 @@ public class S3StorageController(IS3Service s3Service, ILogger<S3StorageControll
     /// <param name="key">Ключ объекта в бакете (например, <c>course_42.json</c>)</param>
     [HttpGet("{key}")]
     [ProducesResponseType(200)]
-    [ProducesResponseType(500)]
+    [ProducesResponseType(400)]
     public async Task<ActionResult<JsonNode>> GetFile(string key)
     {
         logger.LogInformation("{Method} of {Controller} was called for {Key}", nameof(GetFile), nameof(S3StorageController), key);

@@ -14,21 +14,21 @@ public interface IS3Service
     /// </summary>
     /// <param name="fileData">Корректный JSON-документ курса (как в очереди)</param>
     /// <returns><c>true</c>, если объект успешно записан</returns>
-    Task<bool> UploadFile(string fileData);
+    public Task<bool> UploadFile(string fileData);
 
     /// <summary>
     /// Возвращает список ключей всех объектов в управляемом бакете.
     /// </summary>
-    Task<List<string>> GetFileList();
+    public Task<List<string>> GetFileList();
 
     /// <summary>
     /// Скачивает объект по ключу и возвращает его как разобранный JSON-узел.
     /// </summary>
     /// <param name="filePath">Ключ объекта в бакете</param>
-    Task<JsonNode> DownloadFile(string filePath);
+    public Task<JsonNode> DownloadFile(string filePath);
 
     /// <summary>
     /// Создаёт бакет, если он отсутствует. Вызывается на старте приложения.
     /// </summary>
-    Task EnsureBucketExists();
+    public Task EnsureBucketExists();
 }

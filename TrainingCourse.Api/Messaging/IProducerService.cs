@@ -1,4 +1,4 @@
-using TrainingCourse.Api.Models;
+﻿using TrainingCourse.Api.Models;
 
 namespace TrainingCourse.Api.Messaging;
 
@@ -13,5 +13,5 @@ public interface IProducerService
     /// </summary>
     /// <param name="course">Сгенерированный курс, который должен быть сохранён в объектное хранилище</param>
     /// <returns>Задача, завершающаяся после получения подтверждения от брокера</returns>
-    Task SendMessage(Course course);
+    public Task SendMessage(Course course);
 }
